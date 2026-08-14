@@ -10,7 +10,6 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Library html2pdf.js untuk Ekspor PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  
   <style>
     .loader {
       border: 4px solid #f3f3f3;
@@ -24,7 +23,7 @@
     #loading-overlay {
       display: none;
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(255,255,255,0.85); z-index: 9999;
+      background: rgba(255,255,255,0.8); z-index: 9999;
       justify-content: center; align-items: center; flex-direction: column;
     }
     
@@ -56,7 +55,6 @@
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans">
 
-  <!-- OVERLAY LOADING -->
   <div id="loading-overlay">
     <div class="loader mb-4"></div>
     <p class="text-indigo-600 font-bold" id="loading-text">Memuat data...</p>
@@ -327,6 +325,7 @@
     }
 
     function buildDashboardUI(container, stats) {
+        // --- LOGIKA KALKULASI EXECUTIVE SUMMARY ---
         let marginPengeluaran = 0;
         if (stats.penerimaan > 0) {
             marginPengeluaran = ((stats.pengeluaran / stats.penerimaan) * 100).toFixed(1);
@@ -340,6 +339,7 @@
         let statusKas = stats.saldo > 0 ? 
             '<span class="text-emerald-600 font-bold flex items-center gap-1"><i class="ph-bold ph-trend-up"></i> Positif (Surplus)</span>' : 
             '<span class="text-rose-600 font-bold flex items-center gap-1"><i class="ph-bold ph-trend-down"></i> Negatif (Defisit)</span>';
+        // ------------------------------------------
 
         container.innerHTML = `
           <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6">Dashboard Analitik</h2>
@@ -353,6 +353,7 @@
           
           <div class="flex justify-center w-full">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl items-stretch">
+              <!-- Proporsi Keuangan (Pie Chart) -->
               <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col justify-between h-[340px] relative overflow-hidden">
                 <h3 class="text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2 border-b border-gray-100 pb-3 z-10">
                   <i class="ph-bold ph-chart-pie text-indigo-600 text-lg"></i> Proporsi Keuangan
@@ -362,6 +363,7 @@
                 </div>
               </div>
 
+              <!-- Executive Summary -->
               <div class="bg-white rounded-xl shadow-sm border-l-4 border-l-indigo-600 border-y border-r border-gray-200 p-6 flex flex-col justify-between h-[340px] relative overflow-hidden">
                 <div class="absolute -right-4 -bottom-4 text-indigo-50 opacity-40 pointer-events-none">
                    <i class="ph-fill ph-chart-line-up" style="font-size: 140px;"></i>
@@ -426,7 +428,7 @@
       let opts = `<option value="Semua Unit">Semua Unit (Gabungan)</option>`;
       BRANCH_LIST.forEach(b => opts += `<option value="${b}">${b}</option>`);
       
-      let titleText = currentFilterUnit === 'Semua Unit' ? "Rekap Master Keseluruhan" : `Laporan Keuangan Unit: ${currentFilterUnit}`;
+      let titleText = currentFilterUnit === 'Semua Unit' ? "Rekap Master Keseluruhan" : `Laporan Unit: ${currentFilterUnit}`;
       let subtitleText = currentFilterUnit === 'Semua Unit' ? `Akumulasi total nilai gabungan dari ${BRANCH_LIST.length} Unit.` : `Menampilkan data khusus untuk unit ${currentFilterUnit}.`;
 
       container.innerHTML = `
@@ -469,7 +471,7 @@
         document.getElementById('rekap-title').innerText = "Rekap Master Keseluruhan";
         document.getElementById('rekap-subtitle').innerText = `Akumulasi total nilai gabungan dari ${BRANCH_LIST.length} Unit.`;
       } else {
-        document.getElementById('rekap-title').innerText = `Laporan Keuangan Unit: ${currentFilterUnit}`;
+        document.getElementById('rekap-title').innerText = `Laporan Unit: ${currentFilterUnit}`;
         document.getElementById('rekap-subtitle').innerText = `Menampilkan data khusus untuk unit ${currentFilterUnit}.`;
       }
       
@@ -579,184 +581,50 @@
       
       showLoading('Membuat dokumen PDF...');
       
-      setTimeout(() => {
-        try {
-          const titleText = document.getElementById('rekap-title')?.innerText || 'Rekap Keuangan';
-          const originalTable = container.querySelector('table');
-          
-          // Reset scroll posisi ke (0,0) agar html2canvas tidak offset/blank
-          const savedScrollX = window.scrollX;
-          const savedScrollY = window.scrollY;
-          window.scrollTo(0, 0);
-
-          // Container khusus cetak PDF dengan posisi absolute di koordinat (0,0)
-          const printWrapper = document.createElement('div');
-          printWrapper.id = 'pdf-print-wrapper';
-          printWrapper.style.position = 'absolute';
-          printWrapper.style.top = '0';
-          printWrapper.style.left = '0';
-          printWrapper.style.width = '1480px'; // Lebar proporsional A3 Landscape
-          printWrapper.style.backgroundColor = '#ffffff';
-          printWrapper.style.padding = '20px';
-          printWrapper.style.boxSizing = 'border-box';
-          printWrapper.style.zIndex = '999999';
-          printWrapper.style.fontFamily = 'Arial, sans-serif';
-          
-          // Judul Laporan di dalam PDF
-          const titleEl = document.createElement('h2');
-          titleEl.style.fontSize = '18px';
-          titleEl.style.fontWeight = 'bold';
-          titleEl.style.color = '#1e1b4b';
-          titleEl.style.marginBottom = '14px';
-          titleEl.style.textAlign = 'center';
-          titleEl.style.borderBottom = '2px solid #6366f1';
-          titleEl.style.paddingBottom = '8px';
-          titleEl.innerText = titleText;
-          printWrapper.appendChild(titleEl);
-          
-          // Duplikat Tabel
-          const clonedTable = originalTable.cloneNode(true);
-          
-          // Hitung Jumlah Kolom secara Dinamis
-          const headerCells = clonedTable.querySelectorAll('thead tr th');
-          const colCount = headerCells.length || 14;
-          
-          // Skala font & padding otomatis berdasarkan jumlah kolom agar TIDAK TERPOTONG
-          let fontSize = '9px';
-          let cellPadding = '4px 5px';
-          if (colCount >= 18) {
-            fontSize = '7px';
-            cellPadding = '2px 3px';
-          } else if (colCount >= 14) {
-            fontSize = '8px';
-            cellPadding = '3px 4px';
-          }
-          
-          clonedTable.style.width = '100%';
-          clonedTable.style.tableLayout = 'fixed'; // Mengunci lebar tabel agar tidak meluber
-          clonedTable.style.borderCollapse = 'collapse';
-          clonedTable.style.fontSize = fontSize;
-          
-          // Atur persentase lebar tiap kolom secara presisi
-          const categoryColWidth = 18; // 18% untuk kolom Kategori Laporan
-          const monthColWidth = (100 - categoryColWidth) / Math.max(1, colCount - 1); // sisa % dibagi rata ke bulan
-          
-          headerCells.forEach((th, idx) => {
-            if (idx === 0) {
-              th.style.width = categoryColWidth + '%';
-            } else {
-              th.style.width = monthColWidth + '%';
-            }
-          });
-          
-          // FORMAT EXPLICIT INLINE CSS & REMOVE ALL TAILWIND CLASSES (Mencegah html2canvas BLANK)
-          const allRows = clonedTable.querySelectorAll('tr');
-          allRows.forEach((row) => {
-            row.style.pageBreakInside = 'avoid';
-            row.style.breakInside = 'avoid';
-            
-            const isHeader = row.parentElement && row.parentElement.tagName === 'THEAD';
-            const isSectionHeader = row.classList.contains('bg-indigo-50') || row.querySelector('td[colspan]');
-            const isTotalRow = row.classList.contains('bg-indigo-100');
-            
-            const cells = row.querySelectorAll('th, td');
-            cells.forEach((cell, cellIdx) => {
-              cell.style.fontSize = fontSize;
-              cell.style.padding = cellPadding;
-              cell.style.pageBreakInside = 'avoid';
-              cell.style.breakInside = 'avoid';
-              cell.style.position = 'static';
-              cell.style.boxSizing = 'border-box';
-              cell.style.overflow = 'hidden';
-              cell.style.textOverflow = 'ellipsis';
-              
-              if (isHeader) {
-                cell.style.backgroundColor = '#3730a3';
-                cell.style.color = '#ffffff';
-                cell.style.border = '1px solid #4338ca';
-                cell.style.fontWeight = 'bold';
-                cell.style.textAlign = cellIdx === 0 ? 'left' : 'right';
-                cell.style.whiteSpace = 'nowrap';
-              } else if (isSectionHeader) {
-                cell.style.backgroundColor = '#e0e7ff';
-                cell.style.color = '#3730a3';
-                cell.style.border = '1px solid #c7d2fe';
-                cell.style.fontWeight = 'bold';
-                cell.style.whiteSpace = 'normal';
-              } else if (isTotalRow) {
-                cell.style.backgroundColor = '#e0e7ff';
-                cell.style.color = '#1e1b4b';
-                cell.style.border = '1px solid #c7d2fe';
-                cell.style.fontWeight = 'bold';
-                cell.style.textAlign = cellIdx === 0 ? 'left' : 'right';
-                cell.style.whiteSpace = 'nowrap';
-              } else {
-                // Data rows
-                cell.style.backgroundColor = row.classList.contains('bg-gray-50') ? '#f9fafb' : '#ffffff';
-                cell.style.color = cell.classList.contains('text-gray-400') ? '#9ca3af' : '#1f2937';
-                cell.style.border = '1px solid #e5e7eb';
-                if (cellIdx === 0) {
-                  cell.style.fontWeight = '600';
-                  cell.style.whiteSpace = 'normal';
-                  cell.style.wordBreak = 'break-word';
-                  cell.style.textAlign = 'left';
-                } else {
-                  cell.style.textAlign = 'right';
-                  cell.style.whiteSpace = 'nowrap';
-                }
-              }
-              
-              // Hapus class tailwind agar html2canvas tidak error / blank
-              cell.removeAttribute('class');
-            });
-            
-            row.removeAttribute('class');
-          });
-
-          printWrapper.appendChild(clonedTable);
-          document.body.appendChild(printWrapper);
-          
-          // Sembunyikan overlay sementara agar html2canvas merekam gambar murni tanpa terhalang
-          const overlay = document.getElementById('loading-overlay');
-          if (overlay) overlay.style.display = 'none';
-
-          const opt = {
-            margin:       [0.2, 0.2, 0.2, 0.2],
-            filename:     `${titleText.replace(/[^a-zA-Z0-9\s]/g, '_')}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { 
-              scale: 2, 
-              useCORS: true, 
-              logging: false, 
-              backgroundColor: '#ffffff', // Memaksa background putih padat
-              windowWidth: 1500,
-              scrollX: 0,
-              scrollY: 0
-            },
-            jsPDF:        { unit: 'in', format: 'a3', orientation: 'landscape' },
-            pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
-          };
-          
-          html2pdf().set(opt).from(printWrapper).save().then(() => {
-            if (document.body.contains(printWrapper)) {
-              document.body.removeChild(printWrapper);
-            }
-            window.scrollTo(savedScrollX, savedScrollY);
-            hideLoading();
-          }).catch(err => {
-            console.error('Gagal membuat PDF:', err);
-            if (document.body.contains(printWrapper)) {
-              document.body.removeChild(printWrapper);
-            }
-            window.scrollTo(savedScrollX, savedScrollY);
-            hideLoading();
-          });
-
-        } catch (err) {
-          console.error('PDF Export Error:', err);
-          hideLoading();
-        }
-      }, 250);
+      const titleText = document.getElementById('rekap-title')?.innerText || 'Rekap Keuangan';
+      const originalTable = container.querySelector('table');
+      
+      // Buat wadah sementara khusus ekspor PDF agar ukuran & skala pas tanpa terpotong
+      const printWrapper = document.createElement('div');
+      printWrapper.className = 'pdf-no-break bg-white p-6';
+      printWrapper.style.width = '1350px'; // Lebar proporsional untuk A3 Landscape
+      
+      // Judul Laporan di dalam PDF
+      const titleEl = document.createElement('h2');
+      titleEl.className = 'text-xl font-bold text-indigo-900 mb-4 text-center border-b pb-2';
+      titleEl.innerText = titleText;
+      printWrapper.appendChild(titleEl);
+      
+      // Duplikat tabel agar tidak mengganggu tampilan di layar
+      const clonedTable = originalTable.cloneNode(true);
+      clonedTable.style.fontSize = '11px';
+      clonedTable.style.width = '100%';
+      
+      // Bersihkan class sticky yang merusak rendering canvas PDF
+      clonedTable.querySelectorAll('.sticky').forEach(el => {
+        el.classList.remove('sticky', 'left-0', 'top-0', 'z-20', 'z-30', 'z-40');
+      });
+      
+      printWrapper.appendChild(clonedTable);
+      document.body.appendChild(printWrapper);
+      
+      const opt = {
+        margin:       [0.3, 0.3, 0.3, 0.3],
+        filename:     `${titleText.replace(/[^a-zA-Z0-9\s]/g, '_')}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, logging: false, windowWidth: 1400 },
+        jsPDF:        { unit: 'in', format: 'a3', orientation: 'landscape' },
+        pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+      };
+      
+      html2pdf().set(opt).from(printWrapper).save().then(() => {
+        document.body.removeChild(printWrapper);
+        hideLoading();
+      }).catch(err => {
+        if (document.body.contains(printWrapper)) document.body.removeChild(printWrapper);
+        hideLoading();
+        console.error('Gagal membuat PDF:', err);
+      });
     }
 
     window.onload = checkSession;
