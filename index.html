@@ -159,9 +159,67 @@
             },
             getRekapMasterData: function(unit, force) {
               setTimeout(() => this._successHandler({
-                success: true, cabang: 110, months: ['Jul 25', 'Aug 25', 'Sep 25', 'Oct 25', 'Nov 25', 'Dec 25', 'Jan 26', 'Feb 26', 'Mar 26', 'Apr 26', 'May 26', 'Jun 26', 'Grand Total'],
+                success: true, 
+                cabang: 110, 
+                months: ['Jul 25', 'Aug 25', 'Sep 25', 'Oct 25', 'Nov 25', 'Dec 25', 'Jan 26', 'Feb 26', 'Mar 26', 'Apr 26', 'May 26', 'Jun 26', 'Grand Total'],
                 branchList: ["Agus Salim", "Jatiraya"],
-                sections: [{ title: 'PENERIMAAN', type: 'currency', hasTotal: true, rows: [{name: 'SPP', values: [5000000, 6000000, 7000000, 8000000, 9000000, 10000000, 11000000, 12000000, 13000000, 14000000, 15000000, 16000000, 120000000]}], totals: [5000000, 6000000, 7000000, 8000000, 9000000, 10000000, 11000000, 12000000, 13000000, 14000000, 15000000, 16000000, 120000000] }]
+                sections: [
+                  { 
+                    title: 'DATA MURID', type: 'number', hasTotal: false, 
+                    rows: [
+                      { name: 'Murid Trial Baru', values: [15, 9, 9, 2, 7, 11, 20, 26, 15, 12, 10, 14, 150] },
+                      { name: 'Murid Baru', values: [15, 9, 9, 2, 7, 11, 20, 26, 15, 12, 10, 14, 150] },
+                      { name: 'Murid Aktif Kembali', values: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+                      { name: 'Murid Keluar', values: [6, 3, 9, 8, 7, 11, 16, 4, 5, 6, 8, 2, 85] },
+                      { name: 'Murid Aktif', values: [199, 205, 205, 199, 199, 201, 205, 228, 230, 235, 240, 245, 2687] },
+                      { name: 'Pertumbuhan Murid', values: [9, 6, 0, -6, 0, 2, 4, 23, 5, 5, 5, 5, 63] },
+                      { name: 'Murid Dhuafa', values: [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 120] },
+                      { name: 'Murid Garansi', values: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+                      { name: 'Jumlah Guru', values: [5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 70] }
+                    ] 
+                  },
+                  { 
+                    title: 'PENERIMAAN', type: 'currency', hasTotal: true, 
+                    rows: [
+                      { name: 'Daftar', values: [1260000, 1260000, 525000, 350000, 0, 875000, 525000, 875000, 1000000, 1200000, 1500000, 1800000, 11170000] },
+                      { name: 'SPP', values: [30710000, 30710000, 34055000, 31815000, 0, 35185000, 33110000, 34740000, 36000000, 38000000, 40000000, 42000000, 392325000] },
+                      { name: 'Kaos', values: [75000, 75000, 70000, 0, 0, 65000, 65000, 0, 50000, 50000, 50000, 50000, 550000] },
+                      { name: 'KPK', values: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+                      { name: 'Sertifikat', values: [20000, 20000, 50000, 50000, 0, 40000, 50000, 30000, 30000, 40000, 40000, 50000, 420000] },
+                      { name: 'STPB', values: [0, 0, 0, 0, 0, 40000, 0, 40000, 20000, 20000, 20000, 20000, 160000] },
+                      { name: 'Tas', values: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+                      { name: 'BCABS', values: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+                      { name: 'Event', values: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+                      { name: 'Lain-Lain', values: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }
+                    ],
+                    totals: [32065000, 32065000, 34700000, 32215000, 0, 36205000, 33750000, 35685000, 37100000, 39310000, 41610000, 43920000, 404625000]
+                  },
+                  { 
+                    title: 'PENGELUARAN', type: 'currency', hasTotal: true, 
+                    rows: [
+                      { name: 'Voucher', values: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+                      { name: 'Kaos', values: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+                      { name: 'Modul', values: [1500000, 1600000, 1700000, 1800000, 1500000, 1600000, 1700000, 1800000, 1900000, 2000000, 2100000, 2200000, 21400000] },
+                      { name: 'Upah', values: [12000000, 12000000, 12500000, 12500000, 12000000, 12500000, 12500000, 13000000, 13000000, 13500000, 13500000, 14000000, 151500000] },
+                      { name: 'Sewa Tempat', values: [2000000, 2000000, 2000000, 2000000, 2000000, 2000000, 2000000, 2000000, 2000000, 2000000, 2000000, 2000000, 24000000] }
+                    ],
+                    totals: [15500000, 15600000, 16200000, 16300000, 15500000, 16100000, 16200000, 16800000, 16900000, 17500000, 17600000, 18200000, 196900000]
+                  },
+                  { 
+                    title: 'SETOR & KAS', type: 'currency', hasTotal: false, 
+                    rows: [
+                      { name: 'Setoran', values: [10000000, 10000000, 11000000, 10000000, 0, 12000000, 11000000, 12000000, 12000000, 13000000, 13000000, 14000000, 126000000] },
+                      { name: 'Saldo Kas', values: [6565000, 6465000, 7500000, 5915000, -15500000, 8105000, 6550000, 6885000, 8200000, 8810000, 11010000, 11720000, 81725000] }
+                    ] 
+                  },
+                  { 
+                    title: 'PRESENTASE %', type: 'percentage', hasTotal: false, 
+                    rows: [
+                      { name: 'Biaya Operasional', values: [0.48, 0.49, 0.47, 0.51, 0, 0.44, 0.48, 0.47, 0.46, 0.45, 0.42, 0.41, 0.46] },
+                      { name: 'Biaya Salary', values: [0.37, 0.37, 0.36, 0.39, 0, 0.35, 0.37, 0.36, 0.35, 0.34, 0.32, 0.32, 0.35] }
+                    ] 
+                  }
+                ]
               }), 500);
             }
           }
@@ -325,7 +383,6 @@
     }
 
     function buildDashboardUI(container, stats) {
-        // --- LOGIKA KALKULASI EXECUTIVE SUMMARY ---
         let marginPengeluaran = 0;
         if (stats.penerimaan > 0) {
             marginPengeluaran = ((stats.pengeluaran / stats.penerimaan) * 100).toFixed(1);
@@ -339,7 +396,6 @@
         let statusKas = stats.saldo > 0 ? 
             '<span class="text-emerald-600 font-bold flex items-center gap-1"><i class="ph-bold ph-trend-up"></i> Positif (Surplus)</span>' : 
             '<span class="text-rose-600 font-bold flex items-center gap-1"><i class="ph-bold ph-trend-down"></i> Negatif (Defisit)</span>';
-        // ------------------------------------------
 
         container.innerHTML = `
           <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6">Dashboard Analitik</h2>
