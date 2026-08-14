@@ -26,7 +26,6 @@
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(255,255,255,0.85); z-index: 9999;
       justify-content: center; align-items: center; flex-direction: column;
-      backdrop-filter: blur(2px);
     }
     
     .table-container::-webkit-scrollbar { height: 8px; width: 8px; }
@@ -37,14 +36,9 @@
     [x-cloak] { display: none !important; }
 
     /* Mencegah pemotongan baris tabel saat cetak PDF */
-    .pdf-no-break tr, .pdf-no-break td, .pdf-no-break th, .pdf-section-header {
+    .pdf-no-break tr, .pdf-no-break td, .pdf-no-break th {
       page-break-inside: avoid !important;
       break-inside: avoid !important;
-      -webkit-column-break-inside: avoid !important;
-    }
-
-    .pdf-table thead {
-      display: table-header-group !important;
     }
 
     #sidebar { transition: width 0.3s ease-in-out; }
@@ -62,6 +56,7 @@
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans">
 
+  <!-- OVERLAY LOADING -->
   <div id="loading-overlay">
     <div class="loader mb-4"></div>
     <p class="text-indigo-600 font-bold" id="loading-text">Memuat data...</p>
@@ -162,30 +157,13 @@
               }, 200);
             },
             getDashboardStats: function(force) {
-              setTimeout(() => this._successHandler({ penerimaan: 50978946310, pengeluaran: 20406086934, saldo: 30572859376, cabang: 110, branchList: ["Agus Salim", "Jatiraya", "Villa Nusa Indah 3"] }), 300);
+              setTimeout(() => this._successHandler({ penerimaan: 50978946310, pengeluaran: 20406086934, saldo: 30572859376, cabang: 110, branchList: ["Agus Salim", "Jatiraya"] }), 300);
             },
             getRekapMasterData: function(unit, force) {
               setTimeout(() => this._successHandler({
                 success: true, cabang: 110, months: ['Jul 25', 'Aug 25', 'Sep 25', 'Oct 25', 'Nov 25', 'Dec 25', 'Jan 26', 'Feb 26', 'Mar 26', 'Apr 26', 'May 26', 'Jun 26', 'Grand Total'],
-                branchList: ["Agus Salim", "Jatiraya", "Villa Nusa Indah 3"],
-                sections: [
-                  { title: 'DATA MURID', type: 'numeric', hasTotal: false, rows: [
-                    {name: 'Murid Trial Baru', values: [4, 4, 5, 3, 6, 8, 3, 5, 9, 6, 9, 0, 62]},
-                    {name: 'Murid Baru', values: [4, 4, 5, 3, 6, 8, 3, 5, 9, 6, 9, 0, 62]},
-                    {name: 'Murid Aktif Kembali', values: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]},
-                    {name: 'Murid Keluar', values: [7, 3, 1, 3, 6, 0, 3, 6, 1, 6, 6, 0, 42]},
-                    {name: 'Murid Aktif', values: [96, 97, 101, 101, 116, 109, 109, 108, 116, 116, 119, 0, 119]}
-                  ]},
-                  { title: 'PENERIMAAN', type: 'currency', hasTotal: true, rows: [
-                    {name: 'Daftar', values: [700000, 700000, 875000, 525000, 1050000, 1050000, 525000, 875000, 1575000, 1050000, 1400000, 0, 10325000]},
-                    {name: 'SPP', values: [25995000, 25995000, 30230000, 27150000, 33050000, 32540000, 30145000, 31315001, 33240000, 33050000, 33600000, 0, 336260001]},
-                    {name: 'Kaos', values: [0, 0, 65000, 0, 0, 195000, 0, 0, 205000, 0, 65000, 0, 530000]}
-                  ], totals: [26695000, 26695000, 31170000, 27675000, 34100000, 33785000, 30670000, 32190001, 35020000, 34100000, 35065000, 0, 347115001] },
-                  { title: 'PENGELUARAN', type: 'currency', hasTotal: true, rows: [
-                    {name: 'Voucher', values: [550000, 500000, 500000, 350000, 600000, 250000, 450000, 450000, 400000, 600000, 700000, 0, 5350000]},
-                    {name: 'Gaji Guru', values: [12000000, 12000000, 12500000, 12500000, 13000000, 13000000, 13000000, 13000000, 13500000, 13500000, 13500000, 0, 142000000]}
-                  ], totals: [12550000, 12500000, 13000000, 12850000, 13600000, 13250000, 13450000, 13450000, 13900000, 14100000, 14200000, 0, 147350000] }
-                ]
+                branchList: ["Agus Salim", "Jatiraya"],
+                sections: [{ title: 'PENERIMAAN', type: 'currency', hasTotal: true, rows: [{name: 'SPP', values: [5000000, 6000000, 7000000, 8000000, 9000000, 10000000, 11000000, 12000000, 13000000, 14000000, 15000000, 16000000, 120000000]}], totals: [5000000, 6000000, 7000000, 8000000, 9000000, 10000000, 11000000, 12000000, 13000000, 14000000, 15000000, 16000000, 120000000] }]
               }), 500);
             }
           }
@@ -375,7 +353,6 @@
           
           <div class="flex justify-center w-full">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl items-stretch">
-              <!-- Proporsi Keuangan (Pie Chart) -->
               <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col justify-between h-[340px] relative overflow-hidden">
                 <h3 class="text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2 border-b border-gray-100 pb-3 z-10">
                   <i class="ph-bold ph-chart-pie text-indigo-600 text-lg"></i> Proporsi Keuangan
@@ -385,7 +362,6 @@
                 </div>
               </div>
 
-              <!-- Executive Summary -->
               <div class="bg-white rounded-xl shadow-sm border-l-4 border-l-indigo-600 border-y border-r border-gray-200 p-6 flex flex-col justify-between h-[340px] relative overflow-hidden">
                 <div class="absolute -right-4 -bottom-4 text-indigo-50 opacity-40 pointer-events-none">
                    <i class="ph-fill ph-chart-line-up" style="font-size: 140px;"></i>
@@ -555,15 +531,15 @@
         const tContainer = document.getElementById('rekap-table-container');
         if (!data || !data.success) { tContainer.innerHTML = `<div class="p-4 bg-red-100 text-red-700 rounded-lg shadow-sm border border-red-200"><i class="ph-bold ph-warning-circle mr-2"></i> Gagal: ${data ? data.error : 'Error Tersembunyi'}</div>`; return; }
         const months = data.months || [];
-        let html = `<div class="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden"><div class="table-container overflow-x-auto"><table class="min-w-full border-collapse border border-gray-300 text-xs">
-          <thead class="bg-indigo-700 text-white sticky top-0 z-30 shadow-md"><tr><th class="px-3 py-2.5 text-left text-xs font-bold uppercase border border-indigo-600 bg-indigo-700 sticky left-0 z-40 min-w-[180px]">Kategori Laporan</th>
-          ${months.map(m => `<th class="px-2 py-2.5 text-right text-xs font-bold border border-indigo-600 whitespace-nowrap min-w-[75px]">${m}</th>`).join('')}</tr></thead><tbody>`;
+        let html = `<div class="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden"><div class="table-container overflow-x-auto"><table class="min-w-full border-collapse border border-gray-300">
+          <thead class="bg-indigo-700 text-white sticky top-0 z-30 shadow-md"><tr><th class="px-4 py-3 text-left text-xs font-bold uppercase border border-indigo-600 bg-indigo-700 sticky left-0 z-40 min-w-[200px]">Kategori Laporan</th>
+          ${months.map(m => `<th class="px-4 py-3 text-right text-xs font-bold border border-indigo-600 whitespace-nowrap">${m}</th>`).join('')}</tr></thead><tbody>`;
         
         data.sections.forEach(sec => {
-          html += `<tr class="bg-indigo-50 border-b border-gray-300 pdf-section-header"><td colspan="${months.length + 1}" class="px-3 py-2 font-bold text-xs text-indigo-900 italic sticky left-0 bg-indigo-50 z-20 underline uppercase tracking-wider">${sec.title}</td></tr>`;
+          html += `<tr class="bg-indigo-50 border-b border-gray-300"><td colspan="${months.length + 1}" class="px-4 py-2 font-bold text-sm text-indigo-800 italic sticky left-0 bg-indigo-50 z-20 underline">${sec.title}</td></tr>`;
           sec.rows.forEach((row, idx) => {
             const rowBg = idx % 2 === 0 ? 'bg-white' : 'bg-gray-50';
-            html += `<tr class="${rowBg} hover:bg-yellow-50 transition-colors"><td class="px-3 py-1.5 text-xs border border-gray-300 sticky left-0 ${rowBg} z-20 font-medium whitespace-nowrap">${row.name}</td>`;
+            html += `<tr class="${rowBg} hover:bg-yellow-50 transition-colors"><td class="px-4 py-2 text-sm border border-gray-300 sticky left-0 ${rowBg} z-20 font-medium">${row.name}</td>`;
             row.values.forEach(v => {
               let dv = v;
               if (sec.type === 'currency' && v !== 0) dv = formatRp(v);
@@ -572,13 +548,13 @@
                 if(currentFilterUnit === 'Semua Unit' && data.cabang > 0) pct /= data.cabang; 
                 dv = v !== 0 ? pct.toFixed(2) + '%' : '0%'; 
               }
-              html += `<td class="px-2 py-1.5 text-xs ${v === 0 ? 'text-gray-400' : 'text-gray-800'} text-right border border-gray-300 whitespace-nowrap">${dv}</td>`;
+              html += `<td class="px-4 py-2 text-sm ${v === 0 ? 'text-gray-400' : 'text-gray-700'} text-right border border-gray-300">${dv}</td>`;
             });
             html += `</tr>`;
           });
           if (sec.hasTotal && sec.totals) {
-            html += `<tr class="bg-indigo-100 font-bold border-b border-gray-300 text-indigo-950"><td class="px-3 py-2 text-xs border border-gray-300 sticky left-0 bg-indigo-100 z-20 font-extrabold">Total ${sec.title.split(' ')[0]}</td>
-            ${sec.totals.map(t => `<td class="px-2 py-2 text-xs text-right border border-gray-300 font-extrabold whitespace-nowrap">${sec.type === 'currency' ? formatRp(t) : t}</td>`).join('')}</tr>`;
+            html += `<tr class="bg-indigo-100 font-bold border-b border-gray-300"><td class="px-4 py-2 text-sm border border-gray-300 sticky left-0 bg-indigo-100 z-20">Total ${sec.title.split(' ')[0]}</td>
+            ${sec.totals.map(t => `<td class="px-4 py-2 text-sm text-right border border-gray-300">${sec.type === 'currency' ? formatRp(t) : t}</td>`).join('')}</tr>`;
           }
         });
         html += `</tbody></table></div></div>`;
@@ -601,113 +577,186 @@
       const container = document.getElementById('rekap-table-container');
       if (!container || !container.querySelector('table')) return;
       
-      showLoading('Memproses file PDF...');
+      showLoading('Membuat dokumen PDF...');
       
-      const titleText = document.getElementById('rekap-title')?.innerText || 'Rekap Keuangan';
-      const originalTable = container.querySelector('table');
-      
-      // Buat container terisolasi untuk render PDF presisi tanpa terpotong
-      const printWrapper = document.createElement('div');
-      printWrapper.id = 'pdf-export-node';
-      printWrapper.className = 'pdf-no-break bg-white p-6 font-sans text-gray-900';
-      // Gunakan lebar tetap yang proporsional dengan kertas A3 Landscape (1400px)
-      printWrapper.style.width = '1400px';
-      printWrapper.style.boxSizing = 'border-box';
-      printWrapper.style.position = 'absolute';
-      printWrapper.style.left = '-9999px';
-      printWrapper.style.top = '0';
+      setTimeout(() => {
+        try {
+          const titleText = document.getElementById('rekap-title')?.innerText || 'Rekap Keuangan';
+          const originalTable = container.querySelector('table');
+          
+          // Reset scroll posisi ke (0,0) agar html2canvas tidak offset/blank
+          const savedScrollX = window.scrollX;
+          const savedScrollY = window.scrollY;
+          window.scrollTo(0, 0);
 
-      // Header Laporan PDF
-      const headerDiv = document.createElement('div');
-      headerDiv.className = 'border-b-2 border-indigo-900 pb-3 mb-4 flex justify-between items-end';
-      
-      const nowStr = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-      
-      headerDiv.innerHTML = `
-        <div>
-          <h1 class="text-xl font-bold text-indigo-950 uppercase tracking-wide">${titleText}</h1>
-          <p class="text-xs text-gray-500 mt-0.5">Sistem Rekapitulasi Laporan Keuangan Pusat biMBA</p>
-        </div>
-        <div class="text-right text-xs text-gray-500">
-          <p><span class="font-semibold text-gray-700">Tanggal Unduh:</span> ${nowStr}</p>
-          <p><span class="font-semibold text-gray-700">Dicetak Oleh:</span> ${sessionUsername}</p>
-        </div>
-      `;
-      printWrapper.appendChild(headerDiv);
+          // Container khusus cetak PDF dengan posisi absolute di koordinat (0,0)
+          const printWrapper = document.createElement('div');
+          printWrapper.id = 'pdf-print-wrapper';
+          printWrapper.style.position = 'absolute';
+          printWrapper.style.top = '0';
+          printWrapper.style.left = '0';
+          printWrapper.style.width = '1480px'; // Lebar proporsional A3 Landscape
+          printWrapper.style.backgroundColor = '#ffffff';
+          printWrapper.style.padding = '20px';
+          printWrapper.style.boxSizing = 'border-box';
+          printWrapper.style.zIndex = '999999';
+          printWrapper.style.fontFamily = 'Arial, sans-serif';
+          
+          // Judul Laporan di dalam PDF
+          const titleEl = document.createElement('h2');
+          titleEl.style.fontSize = '18px';
+          titleEl.style.fontWeight = 'bold';
+          titleEl.style.color = '#1e1b4b';
+          titleEl.style.marginBottom = '14px';
+          titleEl.style.textAlign = 'center';
+          titleEl.style.borderBottom = '2px solid #6366f1';
+          titleEl.style.paddingBottom = '8px';
+          titleEl.innerText = titleText;
+          printWrapper.appendChild(titleEl);
+          
+          // Duplikat Tabel
+          const clonedTable = originalTable.cloneNode(true);
+          
+          // Hitung Jumlah Kolom secara Dinamis
+          const headerCells = clonedTable.querySelectorAll('thead tr th');
+          const colCount = headerCells.length || 14;
+          
+          // Skala font & padding otomatis berdasarkan jumlah kolom agar TIDAK TERPOTONG
+          let fontSize = '9px';
+          let cellPadding = '4px 5px';
+          if (colCount >= 18) {
+            fontSize = '7px';
+            cellPadding = '2px 3px';
+          } else if (colCount >= 14) {
+            fontSize = '8px';
+            cellPadding = '3px 4px';
+          }
+          
+          clonedTable.style.width = '100%';
+          clonedTable.style.tableLayout = 'fixed'; // Mengunci lebar tabel agar tidak meluber
+          clonedTable.style.borderCollapse = 'collapse';
+          clonedTable.style.fontSize = fontSize;
+          
+          // Atur persentase lebar tiap kolom secara presisi
+          const categoryColWidth = 18; // 18% untuk kolom Kategori Laporan
+          const monthColWidth = (100 - categoryColWidth) / Math.max(1, colCount - 1); // sisa % dibagi rata ke bulan
+          
+          headerCells.forEach((th, idx) => {
+            if (idx === 0) {
+              th.style.width = categoryColWidth + '%';
+            } else {
+              th.style.width = monthColWidth + '%';
+            }
+          });
+          
+          // FORMAT EXPLICIT INLINE CSS & REMOVE ALL TAILWIND CLASSES (Mencegah html2canvas BLANK)
+          const allRows = clonedTable.querySelectorAll('tr');
+          allRows.forEach((row) => {
+            row.style.pageBreakInside = 'avoid';
+            row.style.breakInside = 'avoid';
+            
+            const isHeader = row.parentElement && row.parentElement.tagName === 'THEAD';
+            const isSectionHeader = row.classList.contains('bg-indigo-50') || row.querySelector('td[colspan]');
+            const isTotalRow = row.classList.contains('bg-indigo-100');
+            
+            const cells = row.querySelectorAll('th, td');
+            cells.forEach((cell, cellIdx) => {
+              cell.style.fontSize = fontSize;
+              cell.style.padding = cellPadding;
+              cell.style.pageBreakInside = 'avoid';
+              cell.style.breakInside = 'avoid';
+              cell.style.position = 'static';
+              cell.style.boxSizing = 'border-box';
+              cell.style.overflow = 'hidden';
+              cell.style.textOverflow = 'ellipsis';
+              
+              if (isHeader) {
+                cell.style.backgroundColor = '#3730a3';
+                cell.style.color = '#ffffff';
+                cell.style.border = '1px solid #4338ca';
+                cell.style.fontWeight = 'bold';
+                cell.style.textAlign = cellIdx === 0 ? 'left' : 'right';
+                cell.style.whiteSpace = 'nowrap';
+              } else if (isSectionHeader) {
+                cell.style.backgroundColor = '#e0e7ff';
+                cell.style.color = '#3730a3';
+                cell.style.border = '1px solid #c7d2fe';
+                cell.style.fontWeight = 'bold';
+                cell.style.whiteSpace = 'normal';
+              } else if (isTotalRow) {
+                cell.style.backgroundColor = '#e0e7ff';
+                cell.style.color = '#1e1b4b';
+                cell.style.border = '1px solid #c7d2fe';
+                cell.style.fontWeight = 'bold';
+                cell.style.textAlign = cellIdx === 0 ? 'left' : 'right';
+                cell.style.whiteSpace = 'nowrap';
+              } else {
+                // Data rows
+                cell.style.backgroundColor = row.classList.contains('bg-gray-50') ? '#f9fafb' : '#ffffff';
+                cell.style.color = cell.classList.contains('text-gray-400') ? '#9ca3af' : '#1f2937';
+                cell.style.border = '1px solid #e5e7eb';
+                if (cellIdx === 0) {
+                  cell.style.fontWeight = '600';
+                  cell.style.whiteSpace = 'normal';
+                  cell.style.wordBreak = 'break-word';
+                  cell.style.textAlign = 'left';
+                } else {
+                  cell.style.textAlign = 'right';
+                  cell.style.whiteSpace = 'nowrap';
+                }
+              }
+              
+              // Hapus class tailwind agar html2canvas tidak error / blank
+              cell.removeAttribute('class');
+            });
+            
+            row.removeAttribute('class');
+          });
 
-      // Duplikat & sesuaikan atribut tabel
-      const clonedTable = originalTable.cloneNode(true);
-      clonedTable.className = 'pdf-table w-full border-collapse border border-gray-400 text-[10px]';
-      clonedTable.style.tableLayout = 'fixed'; // Mengunci rasio lebar kolom
-      clonedTable.style.width = '100%';
+          printWrapper.appendChild(clonedTable);
+          document.body.appendChild(printWrapper);
+          
+          // Sembunyikan overlay sementara agar html2canvas merekam gambar murni tanpa terhalang
+          const overlay = document.getElementById('loading-overlay');
+          if (overlay) overlay.style.display = 'none';
 
-      // Hapus class CSS sticky (yang merusak render html2canvas)
-      clonedTable.querySelectorAll('.sticky').forEach(el => {
-        el.classList.remove('sticky', 'left-0', 'top-0', 'z-20', 'z-30', 'z-40');
-      });
+          const opt = {
+            margin:       [0.2, 0.2, 0.2, 0.2],
+            filename:     `${titleText.replace(/[^a-zA-Z0-9\s]/g, '_')}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { 
+              scale: 2, 
+              useCORS: true, 
+              logging: false, 
+              backgroundColor: '#ffffff', // Memaksa background putih padat
+              windowWidth: 1500,
+              scrollX: 0,
+              scrollY: 0
+            },
+            jsPDF:        { unit: 'in', format: 'a3', orientation: 'landscape' },
+            pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+          };
+          
+          html2pdf().set(opt).from(printWrapper).save().then(() => {
+            if (document.body.contains(printWrapper)) {
+              document.body.removeChild(printWrapper);
+            }
+            window.scrollTo(savedScrollX, savedScrollY);
+            hideLoading();
+          }).catch(err => {
+            console.error('Gagal membuat PDF:', err);
+            if (document.body.contains(printWrapper)) {
+              document.body.removeChild(printWrapper);
+            }
+            window.scrollTo(savedScrollX, savedScrollY);
+            hideLoading();
+          });
 
-      // Atur lebar kolom secara presisi agar tidak ada teks melimpah di tepi kanan
-      const thEls = clonedTable.querySelectorAll('thead th');
-      const totalCols = thEls.length;
-      
-      if (totalCols > 0) {
-        // Kolom pertama (Kategori) 18%, sisanya membagi rata sisa 82%
-        const firstColWidth = 18;
-        const otherColWidth = (100 - firstColWidth) / (totalCols - 1);
-
-        thEls.forEach((th, idx) => {
-          if (idx === 0) th.style.width = `${firstColWidth}%`;
-          else th.style.width = `${otherColWidth}%`;
-          th.style.padding = '6px 4px';
-          th.style.fontSize = '10px';
-        });
-
-        // Sesuaikan padding & font size untuk semua sel data
-        clonedTable.querySelectorAll('tbody td').forEach(td => {
-          td.style.padding = '4px 4px';
-          td.style.fontSize = '9.5px';
-          td.style.lineHeight = '1.2';
-          td.style.wordBreak = 'break-word';
-        });
-
-        // Sesuaikan baris sub-header kategori
-        clonedTable.querySelectorAll('.pdf-section-header td').forEach(td => {
-          td.style.padding = '5px 6px';
-          td.style.fontSize = '10px';
-          td.style.backgroundColor = '#e0e7ff';
-          td.style.color = '#1e1b4b';
-        });
-      }
-
-      printWrapper.appendChild(clonedTable);
-      document.body.appendChild(printWrapper);
-
-      // Konfigurasi html2pdf untuk hasil sempurna tanpa terpotong
-      const opt = {
-        margin:       [0.25, 0.25, 0.25, 0.25], // Margin 0.25 inchi sekeliling halaman
-        filename:     `${titleText.replace(/[^a-zA-Z0-9\s]/g, '_')}_${new Date().toISOString().slice(0,10)}.pdf`,
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { 
-          scale: 2, 
-          useCORS: true, 
-          logging: false,
-          windowWidth: 1450,
-          scrollX: 0,
-          scrollY: 0
-        },
-        jsPDF:        { unit: 'in', format: 'a3', orientation: 'landscape' },
-        pagebreak:    { mode: ['avoid-all', 'css', 'legacy'], avoid: ['tr', '.pdf-section-header'] }
-      };
-
-      // Jalankan ekspor PDF
-      html2pdf().set(opt).from(printWrapper).save().then(() => {
-        if (document.body.contains(printWrapper)) document.body.removeChild(printWrapper);
-        hideLoading();
-      }).catch(err => {
-        if (document.body.contains(printWrapper)) document.body.removeChild(printWrapper);
-        hideLoading();
-        console.error('Gagal membuat PDF:', err);
-      });
+        } catch (err) {
+          console.error('PDF Export Error:', err);
+          hideLoading();
+        }
+      }, 250);
     }
 
     window.onload = checkSession;
